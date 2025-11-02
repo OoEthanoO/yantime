@@ -1,65 +1,109 @@
-import Image from "next/image";
+'use client';
+
+import { useState } from 'react';
+import { calculatePartitions, TimePartition } from '@/lib/timePartitions';
+import TimelineVisual from '@/components/TimelineVisual';
 
 export default function Home() {
+  const [startTime, setStartTime] = useState('09:00');
+  const [endTime, setEndTime] = useState('17:00');
+  const [numPartitions, setNumPartitions] = useState(4);
+  const [partitions, setPartitions] = useState<TimePartition[]>([]);
+
+  const handleCalculate = () => {
+    const result = calculatePartitions(startTime, endTime, numPartitions);
+    setPartitions(result);
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      <div className="container mx-auto px-4 py-12 max-w-7xl">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-5xl font-bold text-gray-800 mb-3 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
+            Time Partition Tool
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-gray-600 text-lg">
+            Divide your time into equal partitions and visualize your schedule
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+
+        {/* Input Card */}
+        <div className="bg-white rounded-2xl shadow-xl p-8 mb-12 border border-gray-100">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            {/* Start Time Input */}
+            <div>
+              <label
+                htmlFor="startTime"
+                className="block text-sm font-semibold text-gray-700 mb-2"
+              >
+                Start Time
+              </label>
+              <input
+                id="startTime"
+                type="time"
+                value={startTime}
+                onChange={(e) => setStartTime(e.target.value)}
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 outline-none text-gray-800 font-medium"
+              />
+            </div>
+
+            {/* End Time Input */}
+            <div>
+              <label
+                htmlFor="endTime"
+                className="block text-sm font-semibold text-gray-700 mb-2"
+              >
+                End Time
+              </label>
+              <input
+                id="endTime"
+                type="time"
+                value={endTime}
+                onChange={(e) => setEndTime(e.target.value)}
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 outline-none text-gray-800 font-medium"
+              />
+            </div>
+
+            {/* Number of Partitions Input */}
+            <div>
+              <label
+                htmlFor="numPartitions"
+                className="block text-sm font-semibold text-gray-700 mb-2"
+              >
+                Number of Partitions
+              </label>
+              <input
+                id="numPartitions"
+                type="number"
+                min="1"
+                max="24"
+                value={numPartitions}
+                onChange={(e) => setNumPartitions(parseInt(e.target.value) || 1)}
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 outline-none text-gray-800 font-medium"
+              />
+            </div>
+          </div>
+
+          {/* Calculate Button */}
+          <button
+            onClick={handleCalculate}
+            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-4 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98]"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            Calculate Partitions
+          </button>
         </div>
-      </main>
-    </div>
+
+        {/* Results */}
+        {partitions.length > 0 && (
+          <div className="animate-fade-in">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">
+              Your Time Partitions
+            </h2>
+            <TimelineVisual partitions={partitions} />
+          </div>
+        )}
+      </div>
+    </main>
   );
 }
